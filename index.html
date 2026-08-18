@@ -366,6 +366,39 @@
     .lfhd-sheet code{background:#eef1f6;padding:1px 5px;border-radius:6px;font-size:11.5px}
     .lfhd-sheet .warnbox{margin-top:8px;padding:10px 12px;border-radius:13px;background:var(--red-soft);color:#b3294f;font-size:11.5px;font-weight:700;line-height:1.6}
     @media(max-width:440px){.appbar{gap:7px;padding-left:12px;padding-right:12px}.brandcopy span{display:none}.profile-btn>span:not(.profile-avatar){display:none}.profile-btn>svg{display:none}.profile-btn{padding:5px}}
+    /* ===== V12 온톨로지 / 글 작업대 ===== */
+    .onto-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+    .onto-stat{padding:9px 4px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);text-align:center}
+    .onto-stat b{display:block;font-size:16px;letter-spacing:-.03em}.onto-stat span{font-size:9.5px;color:var(--muted);font-weight:800}
+    .onto-list{display:flex;flex-direction:column;gap:7px}
+    .onto-row{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:16px;background:var(--surface2);border:1px solid var(--line);text-align:left}
+    .onto-name{flex:1;min-width:0}.onto-name b{display:block;font-size:13px}.onto-name small{display:block;margin-top:2px;color:var(--muted);font-size:10.5px;font-weight:700}
+    .onto-bar{flex:0 0 62px;height:6px;border-radius:999px;background:#e7ebf2;overflow:hidden}
+    .onto-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+    .onto-chain{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:13px;padding-top:11px;border-top:1px dashed var(--line)}
+    .onto-chain span{padding:6px 10px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-size:10.5px;font-weight:850}
+    .onto-chain i{font-style:normal;color:var(--muted);font-size:11px}
+    .onto-h{margin:15px 0 7px;font-size:12px;font-weight:900;color:var(--muted)}
+    .onto-items{display:flex;flex-direction:column;gap:6px}
+    .onto-item{display:block;width:100%;text-align:left;padding:11px 12px;border-radius:15px;background:var(--surface2);border:1px solid var(--line)}
+    .onto-item b{display:block;font-size:12.5px;line-height:1.5}.onto-item small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;font-weight:700}
+    .onto-item.static{background:#fff}
+    .onto-empty{margin:6px 0 0;color:var(--muted);font-size:11.5px;line-height:1.6}
+    .td-raw{margin:0;padding:12px;border-radius:15px;background:#f6f8fb;border:1px solid var(--line);font-size:13px;line-height:1.7;white-space:pre-wrap}
+    .td-tags{display:flex;flex-wrap:wrap;gap:6px}
+    .mat-filter-row{display:flex;gap:6px;overflow-x:auto;margin:2px 0 10px;scrollbar-width:none}
+    .mat-filter-row::-webkit-scrollbar{display:none}
+    .mat-chip{flex:none;min-height:34px;padding:0 12px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-size:11.5px;font-weight:800;color:#6b7688}
+    .mat-chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+    #sessionPicker{max-height:270px;overflow:auto;padding-right:2px}
+    .writing-sources{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+    .writing-sources small{width:100%;color:var(--muted);font-size:10.5px;font-weight:800}
+    .writing-item{padding:13px;margin-top:9px}
+    .writing-open{display:block;width:100%;text-align:left}
+    .writing-open b{display:block;font-size:14px;letter-spacing:-.02em}
+    .writing-open small{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;font-weight:750}
+    .writing-open p{margin:7px 0 0;color:#5a6474;font-size:12px;line-height:1.6;white-space:pre-wrap}
+    .writing-row{display:flex;gap:6px;margin-top:9px}
     .autosave.dirty{background:var(--red-soft)!important;color:#c43157!important}
     #fallback-view{max-width:760px;margin:0 auto;padding:24px 18px;font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;line-height:1.7;color:#172033}
     #fallback-view h1{font-size:22px}#fallback-view h2{font-size:17px;margin-top:22px;border-top:1px solid #e2e7ef;padding-top:14px}
@@ -527,9 +560,10 @@
         <div class="thought-feed" id="bookNoteFeed"></div><button class="btn light full" id="newNoteBtn" style="margin-top:10px">새 기록 남기기</button>
       </div>
 
-      <div class="book-panel" data-book-panel="writing">
+      <div class="book-panel" data-book-panel="writing" id="writingWrap">
         <article class="card material-board">
           <div class="panel-heading"><div><h3>쌓인 기록을 골라 글로 재구성합니다</h3><p>빈 독후감부터 쓰지 않습니다. 읽기세션과 실제 발언을 먼저 선택합니다.</p></div><span class="chip blue">AI는 배치만</span></div>
+          <div class="mat-filter-row" id="matFilters"><button class="mat-chip active" data-mat-filter="all">전체</button><button class="mat-chip" data-mat-filter="thought">생각</button><button class="mat-chip" data-mat-filter="voice">음성·대화</button><button class="mat-chip" data-mat-filter="evidence">책 속 근거</button><button class="mat-chip" data-mat-filter="question">남은 질문</button></div>
           <div class="session-picker" id="sessionPicker">
             <label class="session-choice selected"><input type="checkbox" checked data-session-material="1"><span><b>1회 · 1~52쪽</b><small>우주와 인간의 위치</small></span></label>
             <label class="session-choice selected"><input type="checkbox" checked data-session-material="2"><span><b>2회 · 53~146쪽</b><small>과학은 생각을 수정하는 과정</small></span></label>
@@ -538,8 +572,10 @@
           <div class="material-counts"><div class="material-count"><b id="materialThoughts">3</b><span>내 생각</span></div><div class="material-count"><b id="materialEvidence">2</b><span>책 속 근거</span></div><div class="material-count"><b id="materialParent">1</b><span>부모대화</span></div><div class="material-count"><b id="materialQuestions">2</b><span>남은 질문</span></div></div>
           <div class="output-types" id="outputTypes"><button class="output-type selected" data-output="memo"><b>30초 메모</b><span>지금 생각을 짧게</span></button><button class="output-type" data-output="session"><b>세션노트</b><span>오늘 읽은 범위</span></button><button class="output-type" data-output="mid"><b>중간노트</b><span>완독 전 생각 정리</span></button><button class="output-type" data-output="review"><b>완독 독후감</b><span>전체 기록 재구성</span></button><button class="output-type" data-output="debate"><b>토론자료</b><span>주장·근거·반론</span></button><button class="output-type" data-output="parent"><b>책 소개</b><span>부모·친구에게 설명</span></button></div>
           <button class="btn primary full" id="generateWritingBtn" style="margin-top:12px">선택한 기록으로 글 재료 배치</button>
+          <div class="writing-sources" id="writingSources"></div>
           <div class="writing-area" id="writingArea"><div class="writing-toolbar"><span id="selectedMaterialText">세션 3개가 선택됨</span><button id="clearWritingBtn">초기화</button></div><textarea id="writingText"></textarea><div class="writing-actions"><button class="btn light" id="saveWritingBtn">버전 저장</button><button class="btn dark" id="downloadWritingBtn">파일 내려받기</button></div></div>
         </article>
+        <section class="section" id="writingList"></section>
       </div>
     </section>
 
@@ -589,6 +625,11 @@
       <article class="card route-summary">
         <div class="route-summary-top"><div><small>나의 300권 독서경로</small><h2>86권을 읽고<br>24권을 다음 경로로 준비했어요</h2><p>최근에는 우주·과학에서 철학·책임·환경으로 관심이 넓어지고 있습니다.</p></div><div class="route-ring"><span><b>86</b><small>/ 300권</small></span></div></div>
         <div class="route-stats"><div class="route-stat"><b>214</b><span>누적 읽기세션</span></div><div class="route-stat"><b>67</b><span>독서노트·독후감</span></div><div class="route-stat"><b>31</b><span>책과 책의 연결</span></div></div>
+      </article>
+
+      <article class="card" id="ontologyCard" style="margin-top:14px;padding:15px">
+        <div class="panel-heading" style="margin-bottom:10px"><div><h3 style="margin:0;font-size:15px">내 기록으로 만든 연결(온톨로지)</h3><p style="margin:5px 0 0;color:var(--muted);font-size:11.5px;line-height:1.6">책 · 생각 · 질문 · 글이 주제로 묶입니다. 주제를 누르면 연결된 기록이 나오고, 그대로 글 재료가 됩니다.</p></div></div>
+        <div id="ontologyBody"></div>
       </article>
 
       <div class="route-switch"><button class="route-mode active" data-route-mode="graph">연결지도</button><button class="route-mode" data-route-mode="timeline">시간순 독서기록</button></div>
@@ -696,6 +737,18 @@
 <div class="toast" id="toast">저장했습니다</div>
 
 
+<!-- 주제(온톨로지) 상세 -->
+<div class="overlay" id="conceptOverlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="handle"></div>
+    <span class="chip purple">주제</span>
+    <h2 id="conceptTitle" style="margin-top:9px">주제</h2>
+    <p id="conceptLead">이 주제로 묶인 기록입니다.</p>
+    <div id="conceptBody"></div>
+    <div class="sheet-actions"><button class="btn light" id="conceptCloseBtn">닫기</button></div>
+  </div>
+</div>
+
 <!-- LFHD 도구 -->
 <div class="overlay" id="lfhdOverlay" role="dialog" aria-modal="true">
   <div class="sheet lfhd-sheet">
@@ -791,15 +844,14 @@
     return {summary:summary,thoughts:ts.slice(0,4),questions:qs.slice(0,3),change:'',tags:[],by:'local'};
   }
 
-  async function organize(text,mode){
+  async function ask(user,maxTokens){
     var cfg=getCfg();
-    if(!cfg.key) return organizeLocal(text,mode);
-    var body,url,headers;
-    var user=PROMPT+'\n\n[모드] '+(mode==='parent'?'부모와 학생의 대화':'학생 혼잣말')+'\n[원문]\n'+text;
+    if(!cfg.key) throw new Error('AI 키가 없습니다');
+    var url,headers,body;
     if(cfg.provider==='anthropic'){
       url='https://api.anthropic.com/v1/messages';
       headers={'content-type':'application/json','x-api-key':cfg.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-      body={model:cfg.model||'claude-sonnet-5',max_tokens:1024,messages:[{role:'user',content:user}]};
+      body={model:cfg.model||'claude-sonnet-5',max_tokens:maxTokens||1024,messages:[{role:'user',content:user}]};
     }else{
       url=(cfg.base||'https://api.openai.com/v1')+'/chat/completions';
       headers={'content-type':'application/json','authorization':'Bearer '+cfg.key};
@@ -808,7 +860,14 @@
     var r=await fetch(url,{method:'POST',headers:headers,body:JSON.stringify(body)});
     if(!r.ok){throw new Error('API '+r.status+' '+(await r.text()).slice(0,120))}
     var d=await r.json();
-    var out=cfg.provider==='anthropic'?(d.content&&d.content[0]&&d.content[0].text):(d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content);
+    return cfg.provider==='anthropic'?((d.content&&d.content[0]&&d.content[0].text)||''):((d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'');
+  }
+
+  async function organize(text,mode){
+    var cfg=getCfg();
+    if(!cfg.key) return organizeLocal(text,mode);
+    var user=PROMPT+'\n\n[모드] '+(mode==='parent'?'부모와 학생의 대화':'학생 혼잣말')+'\n[원문]\n'+text;
+    var out=await ask(user,1024);
     var m=String(out||'').match(/\{[\s\S]*\}/);
     if(!m) throw new Error('AI 응답을 읽지 못했습니다');
     var o=JSON.parse(m[0]);
@@ -864,7 +923,7 @@
     var cfg=getCfg();
     var m={format:'lfhd',app:'bookgil300',version:'V11',revision:(manifest.revision||0)+1,updatedAt:new Date().toISOString()};
     var snap={state:st,books:(window.__customBooks?window.__customBooks():[]),cfg:cfg.embed?cfg:null};
-    var ids=['lfhd-script','app-script-1','app-script-2','app-script-3'];
+    var ids=['lfhd-script','app-script-1','app-script-2','app-script-3','v12-script'];
     var scripts=ids.map(function(id){
       var n=document.getElementById(id);
       return n? (OPEN+' id="'+id+'">\n'+n.textContent+'\n'+CLOSE) : '';
@@ -931,7 +990,23 @@
   }
 
   /* ---------- 부팅 ---------- */
+  function installKeysFromHash(){
+    try{
+      var h=location.hash||'';
+      var m=h.match(/[#&]k=([A-Za-z0-9\-_]+)/);
+      if(!m) return;
+      var b64=m[1].replace(/-/g,'+').replace(/_/g,'/');
+      var json=decodeURIComponent(Array.prototype.map.call(atob(b64),function(c){return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)}).join(''));
+      var d=JSON.parse(json), c=getCfg();
+      if(d.a)c.key=d.a; if(d.s)c.sonioxKey=d.s; if(d.m)c.model=d.m; if(d.sm)c.sonioxModel=d.sm;
+      c.embed=false; setCfg(c);
+      try{history.replaceState(null,'',location.pathname+location.search)}catch(e){location.hash=''}
+      setTimeout(function(){say('키를 이 기기에 저장했습니다. 이제 말하기가 됩니다.')},400);
+    }catch(e){}
+  }
+
   function boot(){
+    installKeysFromHash();
     var fv=document.getElementById('fallback-view');if(fv)fv.hidden=true;
     savedJSON=curJSON();touch();
     var r=document.getElementById('lfhdRev');if(r)r.textContent='r'+(manifest.revision||0);
@@ -992,7 +1067,7 @@
   }
   function closeTools(){var o=document.getElementById('lfhdOverlay');if(!o)return;o.classList.remove('open');if(!document.querySelector('.overlay.open'))document.body.classList.remove('overlay-open')}
 
-  window.LFHD={touch:touch,save:save,share:share,organize:organize,organizeLocal:organizeLocal,build:build,getCfg:getCfg};
+  window.LFHD={touch:touch,save:save,share:share,organize:organize,organizeLocal:organizeLocal,ask:ask,build:build,getCfg:getCfg,setCfg:setCfg};
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){boot();bindTools()});
   else {boot();bindTools()}
 })();
@@ -1741,5 +1816,435 @@
 })();
 </script>
 
+<script id="v12-script">
+/* ===== V12: 온톨로지(책·생각·질문·글 연결) + 독후감 작업대 ===== */
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  function S(){return window.__state?window.__state():{}}
+  function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
+  function touch(){if(window.LFHD&&window.LFHD.touch)window.LFHD.touch()}
+  function rerender(){if(window.__setState)window.__setState({})}
+  function say(m){var t=document.getElementById('toast');if(!t)return;t.textContent=m;t.classList.add('show');clearTimeout(window.__t12);window.__t12=setTimeout(function(){t.classList.remove('show')},1800)}
+  function openOv(id){var o=document.getElementById(id);if(!o)return;o.classList.add('open');document.body.classList.add('overlay-open')}
+  function closeOv(id){var o=document.getElementById(id);if(!o)return;o.classList.remove('open');if(!document.querySelector('.overlay.open'))document.body.classList.remove('overlay-open')}
+  var TYPE={thought:'내 생각',voice:'음성 원문',parent:'부모대화',change:'생각 변화',question:'열린 질문',evidence:'책 속 근거'};
+  var KIND={memo:'30초 메모',session:'세션노트',mid:'중간노트',review:'완독 독후감',debate:'토론자료',parent:'책 소개'};
+  var SEED=['우주','인간','책임','과학','갈등','지구','환경','관점','생각변화','생명','증거','전쟁','공동체'];
+  var BOOK='코스모스 청소년판';
+
+  /* ---------- 자료 준비 ---------- */
+  function ensure(){
+    var st=S();
+    if(!st.writings) st.writings=[];
+    if(!st.v12tagged){
+      (st.thoughts||[]).forEach(function(t){t.tags=tagsFor(t)});
+      (st.questions||[]).forEach(function(q){q.tags=tagsFor(q)});
+      st.v12tagged=1;
+    }
+    (st.thoughts||[]).forEach(function(t){if(!t.book)t.book=BOOK;if(!t.tags)t.tags=[]});
+    (st.questions||[]).forEach(function(q){if(!q.book)q.book=BOOK;if(!q.tags)q.tags=[]});
+  }
+  function tagsFor(o){
+    var out=(o.tags||[]).slice(), text=((o.title||'')+' '+(o.text||''));
+    SEED.forEach(function(k){if(text.indexOf(k)>=0&&out.indexOf(k)<0)out.push(k)});
+    return out.slice(0,6);
+  }
+  function itemById(id){
+    var st=S(), f=(st.thoughts||[]).filter(function(t){return t.id===id})[0];
+    if(f) return {kind:'thought',o:f};
+    var q=(st.questions||[]).filter(function(x){return x.id===id})[0];
+    return q?{kind:'question',o:q}:null;
+  }
+  function index(){
+    var st=S(), map={};
+    function add(k,bucket,id){if(!k)return;var c=map[k]||(map[k]={name:k,thoughts:[],questions:[],writings:[]});if(c[bucket].indexOf(id)<0)c[bucket].push(id)}
+    (st.thoughts||[]).forEach(function(t){(t.tags||[]).forEach(function(k){add(k,'thoughts',t.id)})});
+    (st.questions||[]).forEach(function(q){(q.tags||[]).forEach(function(k){add(k,'questions',q.id)})});
+    (st.writings||[]).forEach(function(w){
+      (w.sources||[]).forEach(function(id){var it=itemById(id);if(!it)return;(it.o.tags||[]).forEach(function(k){add(k,'writings',w.id)})});
+    });
+    return map;
+  }
+  function writingsUsing(id){return (S().writings||[]).filter(function(w){return (w.sources||[]).indexOf(id)>=0})}
+  function relatedQuestions(t){
+    var tags=t.tags||[];
+    return (S().questions||[]).filter(function(q){return (q.tags||[]).some(function(k){return tags.indexOf(k)>=0})});
+  }
+
+  /* ---------- 온톨로지 카드 ---------- */
+  function renderOntology(){
+    var box=document.getElementById('ontologyBody'); if(!box) return;
+    ensure(); var map=index();
+    var keys=Object.keys(map).sort(function(a,b){
+      var A=map[a],B=map[b];
+      return (B.thoughts.length+B.questions.length+B.writings.length)-(A.thoughts.length+A.questions.length+A.writings.length);
+    });
+    box.innerHTML='';
+    var st=S();
+    var stat=el('div','onto-stats');
+    [[1+((st.savedBooks||[]).length),'책'],[(st.thoughts||[]).length,'생각'],[(st.questions||[]).length,'질문'],[keys.length,'주제'],[(st.writings||[]).length,'글']].forEach(function(p){
+      var d=el('div','onto-stat'); d.appendChild(el('b',null,String(p[0]))); d.appendChild(el('span',null,p[1])); stat.appendChild(d);
+    });
+    box.appendChild(stat);
+    if(!keys.length){box.appendChild(el('p','onto-empty','아직 주제가 없습니다. 생각을 말하면 주제가 생깁니다.'));return}
+    var list=el('div','onto-list');
+    keys.slice(0,12).forEach(function(k){
+      var c=map[k];
+      var row=el('button','onto-row');
+      var left=el('span','onto-name'); left.appendChild(el('b',null,k));
+      left.appendChild(el('small',null,'생각 '+c.thoughts.length+' · 질문 '+c.questions.length+' · 글 '+c.writings.length));
+      row.appendChild(left);
+      var bar=el('span','onto-bar');
+      var i=el('i'); i.style.width=Math.min(100,(c.thoughts.length+c.questions.length)*18)+'%'; bar.appendChild(i);
+      row.appendChild(bar);
+      row.onclick=function(){openConcept(k)};
+      list.appendChild(row);
+    });
+    box.appendChild(list);
+    var chain=el('div','onto-chain');
+    ['책','생각','글','다음 질문'].forEach(function(s,i){
+      if(i)chain.appendChild(el('i',null,'→'));
+      chain.appendChild(el('span',null,s));
+    });
+    box.appendChild(chain);
+  }
+
+  function openConcept(k){
+    ensure(); var c=index()[k]; if(!c) return;
+    var body=document.getElementById('conceptBody'); if(!body) return;
+    document.getElementById('conceptTitle').textContent=k;
+    document.getElementById('conceptLead').textContent='이 주제로 묶인 기록입니다. 아래에서 글 재료로 바로 보낼 수 있습니다.';
+    body.innerHTML='';
+    var st=S();
+    function section(title,arr,render){
+      if(!arr.length) return;
+      body.appendChild(el('h4','onto-h',title+' '+arr.length));
+      var w=el('div','onto-items'); arr.forEach(function(x){w.appendChild(render(x))}); body.appendChild(w);
+    }
+    section('생각', c.thoughts.map(function(id){return (st.thoughts||[]).filter(function(t){return t.id===id})[0]}).filter(Boolean), function(t){
+      var b=el('button','onto-item');
+      b.appendChild(el('b',null,t.title||''));
+      b.appendChild(el('small',null,(TYPE[t.type]||t.type)+' · '+(t.date||'')));
+      b.onclick=function(){closeOv('conceptOverlay');openThoughtDetail(t.id)};
+      return b;
+    });
+    section('질문', c.questions.map(function(id){return (st.questions||[]).filter(function(q){return q.id===id})[0]}).filter(Boolean), function(q){
+      var b=el('button','onto-item'); b.appendChild(el('b',null,q.title||'')); b.appendChild(el('small',null,q.status||''));
+      b.onclick=function(){say('질문은 글 재료 목록에서 고를 수 있습니다')};
+      return b;
+    });
+    section('이 주제로 쓴 글', c.writings.map(function(id){return (st.writings||[]).filter(function(w){return w.id===id})[0]}).filter(Boolean), function(w){
+      var b=el('button','onto-item'); b.appendChild(el('b',null,w.title||KIND[w.kind]||'글')); b.appendChild(el('small',null,(KIND[w.kind]||'')+' · 재료 '+(w.sources||[]).length+'개'));
+      b.onclick=function(){closeOv('conceptOverlay');openWriting(w.id)};
+      return b;
+    });
+    var go=el('button','btn primary full','이 주제로 글 쓰기');
+    go.style.marginTop='14px';
+    go.onclick=function(){
+      closeOv('conceptOverlay');
+      selected={}; c.thoughts.concat(c.questions).forEach(function(id){selected[id]=1});
+      current=null;
+      goWriting();
+      say('“'+k+'” 기록 '+Object.keys(selected).length+'개를 재료로 담았습니다');
+    };
+    body.appendChild(go);
+    openOv('conceptOverlay');
+  }
+
+  /* ---------- 생각 상세 ---------- */
+  function openThoughtDetail(id){
+    ensure();
+    var it=itemById(id); if(!it) return;
+    var t=it.o;
+    var chip=document.getElementById('thoughtDetailChip');
+    if(chip){chip.textContent=TYPE[t.type]||t.type||'기록';chip.className='chip '+(t.type==='question'?'yellow':t.type==='change'?'red':t.type==='parent'?'yellow':t.type==='evidence'?'blue':'teal')}
+    var ti=document.getElementById('thoughtDetailTitle'); if(ti)ti.textContent=t.title||'';
+    var tx=document.getElementById('thoughtDetailText'); if(tx)tx.textContent=(TYPE[t.type]||'')+' · '+(t.date||'')+' · '+(t.book||BOOK);
+    var body=document.getElementById('thoughtDetailBody'); if(!body) return;
+    body.innerHTML='';
+
+    body.appendChild(el('h4','onto-h','학생이 남긴 원문'));
+    body.appendChild(el('p','td-raw',t.text||''));
+
+    body.appendChild(el('h4','onto-h','주제 (온톨로지)'));
+    var tagBox=el('div','td-tags');
+    (t.tags||[]).forEach(function(k){
+      var c=el('button','chip purple',k+' ×');
+      c.onclick=function(){t.tags=t.tags.filter(function(x){return x!==k});touch();openThoughtDetail(id);renderOntology()};
+      tagBox.appendChild(c);
+    });
+    var addBtn=el('button','chip gray','+ 주제 추가');
+    addBtn.onclick=function(){
+      var v=prompt('이 생각의 주제를 한 단어로 적으세요');
+      if(v&&v.trim()){t.tags=(t.tags||[]).concat([v.trim()]);touch();openThoughtDetail(id);renderOntology()}
+    };
+    tagBox.appendChild(addBtn);
+    body.appendChild(tagBox);
+
+    body.appendChild(el('h4','onto-h','같은 주제의 질문'));
+    var qs=relatedQuestions(t);
+    if(qs.length){var qw=el('div','onto-items');qs.slice(0,4).forEach(function(q){var d=el('div','onto-item static');d.appendChild(el('b',null,q.title));d.appendChild(el('small',null,q.status||''));qw.appendChild(d)});body.appendChild(qw)}
+    else body.appendChild(el('p','onto-empty','연결된 질문이 아직 없습니다.'));
+
+    body.appendChild(el('h4','onto-h','이 생각이 쓰인 글'));
+    var ws=writingsUsing(id);
+    if(ws.length){var ww=el('div','onto-items');ws.forEach(function(w){var b=el('button','onto-item');b.appendChild(el('b',null,w.title||KIND[w.kind]));b.appendChild(el('small',null,KIND[w.kind]||''));b.onclick=function(){closeOv('thoughtOverlay');openWriting(w.id)};ww.appendChild(b)});body.appendChild(ww)}
+    else body.appendChild(el('p','onto-empty','아직 어떤 글에도 쓰이지 않았습니다.'));
+
+    var pick=el('button','btn teal full',selected[id]?'글 재료에서 빼기':'글 재료로 담기');
+    pick.style.marginTop='12px';
+    pick.onclick=function(){
+      if(selected[id])delete selected[id]; else selected[id]=1;
+      renderPicker(); pick.textContent=selected[id]?'글 재료에서 빼기':'글 재료로 담기';
+      say(selected[id]?'글 재료에 담았습니다':'글 재료에서 뺐습니다');
+    };
+    body.appendChild(pick);
+    var go=el('button','btn light full','글 작업대로 가기');
+    go.style.marginTop='8px';
+    go.onclick=function(){closeOv('thoughtOverlay');goWriting()};
+    body.appendChild(go);
+    openOv('thoughtOverlay');
+  }
+
+  /* ---------- 글(독후감) 작업대 ---------- */
+  var selected={}, current=null, matFilter='all';
+
+  function materials(){
+    ensure(); var st=S(), out=[];
+    (st.thoughts||[]).forEach(function(t){out.push({id:t.id,kind:'thought',type:t.type,title:t.title,text:t.text,date:t.date,tags:t.tags||[]})});
+    (st.questions||[]).forEach(function(q){out.push({id:q.id,kind:'question',type:'question',title:q.title,text:q.status||'',date:'질문',tags:q.tags||[]})});
+    return out.reverse();
+  }
+  function renderPicker(){
+    var box=document.getElementById('sessionPicker'); if(!box) return;
+    var arr=materials().filter(function(m){
+      if(matFilter==='all')return true;
+      if(matFilter==='question')return m.type==='question';
+      if(matFilter==='voice')return m.type==='voice'||m.type==='parent';
+      if(matFilter==='evidence')return m.type==='evidence';
+      return m.type==='thought'||m.type==='change';
+    });
+    box.innerHTML='';
+    if(!arr.length){box.appendChild(el('p','onto-empty','기록이 없습니다. 먼저 생각을 남겨보세요.'));}
+    arr.slice(0,40).forEach(function(m){
+      var lab=el('label','session-choice'+(selected[m.id]?' selected':''));
+      var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!selected[m.id];
+      cb.onchange=function(){if(cb.checked)selected[m.id]=1;else delete selected[m.id];lab.classList.toggle('selected',cb.checked);updateCounts()};
+      lab.appendChild(cb);
+      var sp=el('span'); sp.appendChild(el('b',null,m.title||''));
+      sp.appendChild(el('small',null,(TYPE[m.type]||m.type)+' · '+(m.date||'')+(m.tags.length?' · '+m.tags.slice(0,3).join(', '):'')));
+      lab.appendChild(sp);
+      box.appendChild(lab);
+    });
+    updateCounts();
+  }
+  function updateCounts(){
+    var st=S(), ids=Object.keys(selected);
+    var c={thought:0,evidence:0,parent:0,question:0};
+    ids.forEach(function(id){
+      var it=itemById(id); if(!it) return;
+      var ty=it.kind==='question'?'question':it.o.type;
+      if(ty==='question')c.question++;
+      else if(ty==='evidence')c.evidence++;
+      else if(ty==='parent')c.parent++;
+      else c.thought++;
+    });
+    var m=document.getElementById('materialThoughts'); if(m)m.textContent=c.thought;
+    m=document.getElementById('materialEvidence'); if(m)m.textContent=c.evidence;
+    m=document.getElementById('materialParent'); if(m)m.textContent=c.parent;
+    m=document.getElementById('materialQuestions'); if(m)m.textContent=c.question;
+    var t=document.getElementById('selectedMaterialText'); if(t)t.textContent='재료 '+ids.length+'개가 선택됨';
+  }
+
+  function pickedItems(){
+    return Object.keys(selected).map(itemById).filter(Boolean).map(function(x){return {kind:x.kind,o:x.o}});
+  }
+  function kindNow(){return (S().currentOutput)||'memo'}
+
+  function composeLocal(items,kind){
+    var g={thought:[],evidence:[],parent:[],question:[],change:[],voice:[]};
+    items.forEach(function(it){
+      var ty=it.kind==='question'?'question':(it.o.type||'thought');
+      (g[ty]||g.thought).push(it.o);
+    });
+    var L=[];
+    L.push('['+(KIND[kind]||'글')+'] '+BOOK);
+    L.push('');
+    if(g.thought.length||g.voice.length){
+      L.push('■ 내가 한 생각');
+      g.thought.concat(g.voice).forEach(function(o){L.push('- '+(o.text||o.title))});
+      L.push('');
+    }
+    if(g.evidence.length){L.push('■ 책에서 찾은 근거');g.evidence.forEach(function(o){L.push('- '+(o.text||o.title))});L.push('')}
+    if(g.parent.length){L.push('■ 대화에서 나온 것');g.parent.forEach(function(o){L.push('- '+(o.text||o.title))});L.push('')}
+    if(g.change.length){L.push('■ 생각이 바뀐 지점');g.change.forEach(function(o){L.push('- '+(o.text||o.title))});L.push('')}
+    if(g.question.length){L.push('■ 아직 남은 질문');g.question.forEach(function(o){L.push('- '+(o.title||''))});L.push('')}
+    L.push('※ 위 재료를 내 말로 이어 붙이면 글이 됩니다.');
+    return L.join('\n');
+  }
+
+  async function build(){
+    var items=pickedItems();
+    if(!items.length){say('재료를 먼저 고르세요');return}
+    var kind=kindNow();
+    var area=document.getElementById('writingArea');
+    var ta=document.getElementById('writingText');
+    area.classList.add('visible');
+    ta.value=composeLocal(items,kind);
+    renderSourceBar();
+    var cfg=window.LFHD?window.LFHD.getCfg():{};
+    if(!cfg.key){say('재료를 배치했습니다 (AI 키 없음)');return}
+    var btn=document.getElementById('generateWritingBtn');
+    var old=btn.textContent; btn.textContent='Claude가 배치하는 중…'; btn.disabled=true;
+    try{
+      var lines=items.map(function(it){
+        var ty=it.kind==='question'?'남은 질문':(TYPE[it.o.type]||'생각');
+        return '- ['+ty+'] '+(it.o.text||it.o.title);
+      }).join('\n');
+      var p='너는 청소년 독서기록 도우미다. 아래는 학생이 직접 남긴 기록이다.\n'+
+        '이 기록만 사용해 "'+(KIND[kind]||'글')+'" 형식의 글 초안을 한국어로 만들어라.\n'+
+        '규칙: 1) 새로운 사실이나 인용을 지어내지 마라. 2) 학생의 표현을 최대한 살려라. 3) 문단 3~5개. '+
+        '4) 마지막 문단에 아직 답하지 못한 질문을 남겨라. 5) 설명 없이 글만 출력하라.\n\n'+
+        '[책] '+BOOK+'\n[학생 기록]\n'+lines;
+      var out=await window.LFHD.ask(p,1400);
+      if(out&&out.trim()){ta.value=out.trim();say('Claude가 내 기록으로 초안을 배치했습니다')}
+    }catch(e){ say('AI 배치 실패: '+e.message+' · 기본 배치를 씁니다') }
+    btn.textContent=old; btn.disabled=false;
+  }
+
+  function renderSourceBar(){
+    var bar=document.getElementById('writingSources'); if(!bar) return;
+    bar.innerHTML='';
+    var items=pickedItems();
+    if(!items.length){bar.appendChild(el('small',null,'재료 없음'));return}
+    bar.appendChild(el('small',null,'이 글의 근거 '+items.length+'개'));
+    items.slice(0,8).forEach(function(it){
+      var ty=it.kind==='question'?'질문':(TYPE[it.o.type]||'생각');
+      bar.appendChild(el('span','chip gray',ty+' · '+String(it.o.title||'').slice(0,14)));
+    });
+  }
+
+  function saveWriting(){
+    var ta=document.getElementById('writingText');
+    var text=(ta.value||'').trim();
+    if(!text){say('먼저 글 재료를 배치하세요');return}
+    var st=S(); if(!st.writings)st.writings=[];
+    var now=new Date().toLocaleString('ko-KR');
+    var srcs=Object.keys(selected);
+    if(current){
+      var w=st.writings.filter(function(x){return x.id===current})[0];
+      if(w){ w.versions=(w.versions||[]).concat([{at:now,text:w.text}]); w.text=text; w.updatedAt=now; w.sources=srcs; w.kind=kindNow(); }
+    }else{
+      var id='w'+Date.now();
+      st.writings.push({id:id,kind:kindNow(),title:(KIND[kindNow()]||'글')+' · '+text.split('\n')[0].slice(0,18),text:text,sources:srcs,book:BOOK,createdAt:now,updatedAt:now,versions:[]});
+      current=id;
+    }
+    touch(); renderWritingList(); renderOntology();
+    say('글을 저장했습니다. 위 “저장”을 눌러 파일로 남기세요.');
+  }
+
+  function openWriting(id){
+    var w=(S().writings||[]).filter(function(x){return x.id===id})[0]; if(!w) return;
+    current=id; selected={}; (w.sources||[]).forEach(function(s){selected[s]=1});
+    var st=S(); st.currentOutput=w.kind;
+    $$('.output-type').forEach(function(b){b.classList.toggle('selected',b.dataset.output===w.kind)});
+    goWriting();
+    var area=document.getElementById('writingArea'); area.classList.add('visible');
+    document.getElementById('writingText').value=w.text||'';
+    renderPicker(); renderSourceBar();
+    say('“'+(w.title||'글')+'”을 열었습니다');
+  }
+
+  function renderWritingList(){
+    var box=document.getElementById('writingList'); if(!box) return;
+    var ws=(S().writings||[]).slice().reverse();
+    box.innerHTML='';
+    var head=el('div','section-head'); head.appendChild(el('h2',null,'내가 쓴 글'));
+    head.appendChild(el('span',null, ws.length?ws.length+'편':'아직 없음'));
+    box.appendChild(head);
+    if(!ws.length){ box.appendChild(el('p','onto-empty','재료를 고르고 “글 재료 배치”를 누르면 첫 글이 생깁니다.')); return }
+    ws.forEach(function(w){
+      var card=el('article','card writing-item');
+      var b=el('button','writing-open');
+      b.appendChild(el('b',null,w.title||KIND[w.kind]));
+      b.appendChild(el('small',null,(KIND[w.kind]||'')+' · 근거 '+(w.sources||[]).length+'개 · 판 '+((w.versions||[]).length+1)+' · '+(w.updatedAt||'')));
+      b.appendChild(el('p',null,(w.text||'').slice(0,90)+'…'));
+      b.onclick=function(){openWriting(w.id)};
+      card.appendChild(b);
+      var row=el('div','writing-row');
+      var dl=el('button','chip blue','내려받기');
+      dl.onclick=function(){
+        var blob=new Blob([w.text||''],{type:'text/plain;charset=utf-8'});
+        var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(w.title||'글')+'.txt';a.click();
+        setTimeout(function(){URL.revokeObjectURL(a.href)},3000);
+      };
+      row.appendChild(dl);
+      var del=el('button','chip red','삭제');
+      del.onclick=function(){
+        if(!confirm('이 글을 지웁니다. 계속할까요?'))return;
+        var st=S(); st.writings=st.writings.filter(function(x){return x.id!==w.id});
+        if(current===w.id)current=null;
+        touch(); renderWritingList(); renderOntology();
+      };
+      row.appendChild(del);
+      card.appendChild(row);
+      box.appendChild(card);
+    });
+  }
+
+  function goWriting(){
+    var home=document.getElementById('openBookHomeBtn'); if(home)home.click();
+    setTimeout(function(){var tab=document.querySelector('[data-book-tab="writing"]');if(tab)tab.click()},60);
+    setTimeout(function(){renderPicker();renderWritingList();var a=document.getElementById('writingWrap');if(a)a.scrollIntoView({behavior:'smooth',block:'start'})},120);
+  }
+
+  /* ---------- 생각 카드 → 상세 ---------- */
+  function bindCards(){
+    $$('#thoughtFeed .thought-card, #bookNoteFeed .thought-card').forEach(function(c){
+      if(c.dataset.v12) return; c.dataset.v12='1';
+      c.addEventListener('click',function(e){
+        var id=c.dataset.thoughtId;
+        if(!id) return;
+        e.stopImmediatePropagation(); e.preventDefault();
+        openThoughtDetail(id);
+      },true);
+    });
+  }
+
+  /* ---------- 시작 ---------- */
+  function boot(){
+    ensure();
+    var g=document.getElementById('generateWritingBtn'); if(g)g.onclick=build;
+    var s=document.getElementById('saveWritingBtn'); if(s)s.onclick=saveWriting;
+    var d=document.getElementById('downloadWritingBtn');
+    if(d)d.onclick=function(){
+      var t=(document.getElementById('writingText').value||'').trim();
+      if(!t){say('내려받을 글이 없습니다');return}
+      var blob=new Blob([t],{type:'text/plain;charset=utf-8'});
+      var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(KIND[kindNow()]||'글')+'_'+BOOK+'.txt';a.click();
+      setTimeout(function(){URL.revokeObjectURL(a.href)},3000);
+    };
+    var c=document.getElementById('clearWritingBtn');
+    if(c)c.onclick=function(){document.getElementById('writingText').value='';current=null;say('작성 영역을 비웠습니다')};
+    $$('.output-type').forEach(function(b){b.addEventListener('click',function(){setTimeout(renderSourceBar,10)})});
+    $$('[data-mat-filter]').forEach(function(b){
+      b.onclick=function(){matFilter=b.dataset.matFilter;$$('[data-mat-filter]').forEach(function(x){x.classList.toggle('active',x===b)});renderPicker()};
+    });
+    var cl=document.getElementById('conceptCloseBtn'); if(cl)cl.onclick=function(){closeOv('conceptOverlay')};
+    ['conceptOverlay'].forEach(function(id){
+      var o=document.getElementById(id); if(o)o.addEventListener('click',function(e){if(e.target===o)closeOv(id)});
+    });
+    renderPicker(); renderWritingList(); renderOntology(); bindCards();
+    var feed=document.getElementById('thoughtFeed');
+    if(feed) new MutationObserver(function(){bindCards();renderOntology()}).observe(feed,{childList:true});
+    var nf=document.getElementById('bookNoteFeed');
+    if(nf) new MutationObserver(bindCards).observe(nf,{childList:true});
+    window.V12={renderOntology:renderOntology,renderPicker:renderPicker,renderWritingList:renderWritingList,openThoughtDetail:openThoughtDetail};
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+})();
+
+</script>
 </body>
 </html>
