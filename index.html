@@ -685,6 +685,10 @@ b,strong{font-weight:700}
 .chat-input{display:flex;gap:7px;align-items:flex-end;margin-top:9px}
 .chat-input textarea{flex:1;min-height:44px;max-height:110px;padding:11px 12px;border-radius:3px;border:1px solid var(--line);background:var(--surface2);font-size:13px;line-height:1.6;resize:vertical}
 .chat-input .btn{flex:0 0 78px;min-height:44px}
+.seg-raw{display:block;margin-top:5px;color:var(--ink-500);font-size:10.5px;line-height:1.55}
+.td-rawwrap{margin-top:7px;font-size:11.5px;color:var(--muted)}
+.td-rawwrap summary{cursor:pointer;font-weight:750;padding:4px 0}
+.td-rawtext{margin:4px 0 0;padding:9px 10px;border-radius:3px;background:var(--paper-2);border:1px solid var(--rule-c);font-size:11.5px;line-height:1.6;color:var(--ink-700)}
 
   </style>
 </head>
@@ -1123,9 +1127,10 @@ b,strong{font-weight:700}
   var SEG_PROMPT='너는 청소년 독서기록 도우미다. 아래는 학생이 책을 읽다가 말한 내용을 받아 적은 전사문이다. 문장이 정리되어 있지 않고 구어체다.\n'+
     '전사문 "전체"를 빠짐없이 훑어서, 의미가 다른 조각마다 하나씩 잘라라. 하나의 조각에 두 가지 생각을 섞지 마라. 짧은 말이라도 의미가 다르면 따로 잘라라.\n'+
     '아래 JSON만 출력하라. 설명이나 코드블록 표시를 붙이지 마라.\n'+
-    '{"summary":"전체를 한 문장으로","tags":["주제어"],"segments":[{"type":"생각|질문|근거|감정|변화|대화","quote":"전사문에서 그대로 가져온 말","title":"20자 이내 제목","body":"그 말을 읽기 쉽게 정리한 1~2문장","tags":["주제어"],"note":"이렇게 분류한 이유 한 줄"}]}\n'+
+    '{"summary":"전체를 한 문장으로","tags":["주제어"],"segments":[{"type":"생각|질문|근거|감정|변화|대화","raw":"전사문에서 가져온 부분 그대로","quote":"그 말을 최소한으로 다듬은 한 문장","title":"20자 이내 제목","body":"그 말을 읽기 쉽게 정리한 1~2문장","tags":["주제어"],"note":"이렇게 분류한 이유 한 줄"}]}\n'+
     '규칙:\n'+
-    '1) quote 는 전사문에 실제로 있는 말이어야 한다. 새로 지어내지 마라. 말을 다듬지 마라.\n'+
+    '1) raw 는 전사문에 실제로 있는 말이어야 한다. 새로 지어내지 마라.\n'+
+    '1-2) quote 는 raw 를 다듬은 문장이다. 군말(어, 음, 그니까, 뭐지, 좀)과 반복을 빼고, 잘못 들린 말을 바로잡고, 문장을 끝맺어라. 학생의 말투와 뜻은 그대로 둔다. 새 내용을 넣지 마라.\n'+
     '2) 전사문의 처음부터 끝까지 순서대로 다룬다. 빠뜨리는 부분이 없게 하라.\n'+
     '3) type 기준 — 질문: 답을 아직 모르는 물음. 근거: 책 속 장면·문장·사실을 든 말. 감정: 무서움·놀람·재미 같은 느낌. 변화: 앞의 생각이 뒤에서 바뀐 지점. 대화: 상대와 주고받은 말. 생각: 그 외 학생의 판단·해석.\n'+
     '4) title 은 학생의 말투를 살려 짧게 쓴다. body 는 학생의 말을 정리만 한다 — 새 사실이나 책 내용을 덧붙이지 마라.\n'+
@@ -1149,6 +1154,8 @@ b,strong{font-weight:700}
       s.type=T2APP[s.type]?s.type:'생각';
       s.quote=String(s.quote||s.title||'').trim();
       s.title=String(s.title||s.quote).slice(0,40);
+      s.raw=String(s.raw||s.quote||'').trim();
+      s.quote=String(s.quote||s.raw||'').trim();
       s.body=String(s.body||s.quote||'').trim();
       s.tags=Array.isArray(s.tags)?s.tags.slice(0,4):[];
       if(mode==='parent'&&s.type==='대화') s.appType='parent'; else s.appType=T2APP[s.type];
@@ -1162,6 +1169,17 @@ b,strong{font-weight:700}
       change:(segs.filter(function(s){return s.appType==='change'})[0]||{}).body||'',
       by:o.by||'ai'
     };
+  }
+
+  function cleanKo(t){
+    var x=' '+String(t||'')+' ';
+    x=x.replace(/\s(어+|음+|엄+|에+|아니 그|그니까|그러니까|뭐지|뭐랄까|뭔가 그|막 그|이제 뭐)(?=\s)/g,' ');
+    x=x.replace(/\s(그|막)(?=\s)/g,' ');
+    x=x.replace(/(.)\1{3,}/g,'$1');
+    x=x.replace(/\s{2,}/g,' ').trim();
+    x=x.replace(/^[,.\s]+/,'');
+    if(x) x=x.charAt(0).toUpperCase()===x.charAt(0)?x:x;
+    return x.replace(/([^.?!…])$/,'$1.');
   }
 
   function organizeLocal(text,mode){
@@ -1181,7 +1199,8 @@ b,strong{font-weight:700}
       else if(/(쪽|책에서|나온다|나왔|장면|문장|저자|작가|라고 했)/.test(p)) type='근거';
       else if(/(처음에는|원래는|바뀌|이제는|다시 생각)/.test(p)) type='변화';
       else if(mode==='parent'&&/(화자|엄마|아빠|부모)/.test(p)) type='대화';
-      return {type:type,quote:p,title:p.slice(0,24),body:p,tags:[],note:'기기 안에서 나눔'};
+      var c=cleanKo(p);
+      return {type:type,raw:p,quote:c,title:c.slice(0,24),body:c,tags:[],note:'기기 안에서 나눔'};
     });
     return fromSegments({summary:(segs[0]||{}).quote||t.slice(0,60),segments:segs,tags:[],by:'local'},mode);
   }
@@ -1910,8 +1929,9 @@ b,strong{font-weight:700}
       cb.onchange=function(){row.classList.toggle('off',!cb.checked);updateSaveLabel()};
       row.appendChild(cb);
       var mid=el('span','seg-mid');
-      var q=el('span','seg-quote'); q.appendChild(el('em',null,'생각 원문')); q.appendChild(el('span',null,'“'+(sg.quote||'')+'”'));
+      var q=el('span','seg-quote'); q.appendChild(el('em',null,'생각 (다듬은 말)')); q.appendChild(el('span',null,'“'+(sg.quote||'')+'”'));
       mid.appendChild(q);
+      if(sg.raw&&sg.raw!==sg.quote) mid.appendChild(el('span','seg-raw','들린 그대로: '+sg.raw));
       mid.appendChild(el('b','seg-title',sg.title||''));
       mid.appendChild(el('span','seg-body',sg.body||sg.quote||''));
       var meta=el('span','seg-meta');
@@ -1963,18 +1983,20 @@ b,strong{font-weight:700}
     var res=lastResult.res, rawText=lastResult.rawText, now=Date.now();
     var dateLabel='오늘 · '+state.page+'쪽';
     var n=0;
+    var tidy=(res.segments||[]).map(function(x){return x.quote}).filter(Boolean).join(' ');
     state.thoughts.push({id:'t'+(now+n++),type:voiceMode==='parent'?'parent':'voice',date:dateLabel,
-      title:(res.summary||rawText).slice(0,60),text:rawText,tags:(res.tags||[]).slice(0,4),
-      links:[voiceMode==='parent'?'부모대화 원문':'음성 원문 '+Math.max(1,recordSeconds)+'초','전문 보존']});
+      title:(res.summary||tidy||rawText).slice(0,60),text:tidy||rawText,quote:tidy||rawText,raw:rawText,
+      tags:(res.tags||[]).slice(0,4),
+      links:[voiceMode==='parent'?'부모대화 정리':'음성 기록 '+Math.max(1,recordSeconds)+'초','전사 원본 보존']});
     var saved=0;
     segRows().forEach(function(row){
       if(!row.querySelector('input').checked) return;
       var sg=(res.segments||[])[Number(row.dataset.idx)]; if(!sg) return;
       var ko=row.querySelector('select').value;
       var appType=KO2APP[ko]||'thought';
-      var body=sg.body||sg.quote||sg.title, quote=sg.quote||body;
+      var body=sg.body||sg.quote||sg.title, quote=sg.quote||body, raw=sg.raw||quote;
       state.thoughts.push({id:'t'+(now+n++),type:appType,date:dateLabel,title:(sg.title||body).slice(0,60),
-        text:body,quote:quote,tags:(sg.tags||[]).slice(0,4),links:[ko,res.by==='ai'?'Claude 분류':'기기 분류']});
+        text:body,quote:quote,raw:raw,tags:(sg.tags||[]).slice(0,4),links:[ko,res.by==='ai'?'Claude 분류':'기기 분류']});
       if(appType==='question'){
         state.questions.push({id:'q'+(now+n++),title:(sg.title||body).slice(0,80),status:'새로 생긴 질문',page:state.page,
           tags:(sg.tags||[]).slice(0,4),history:[{date:dateLabel,title:'음성에서 질문으로 분류됨',text:quote}]});
@@ -2431,8 +2453,14 @@ b,strong{font-weight:700}
     var body=document.getElementById('thoughtDetailBody'); if(!body) return;
     body.innerHTML='';
 
-    body.appendChild(el('h4','onto-h','생각 원문'));
+    body.appendChild(el('h4','onto-h','학생의 말 (다듬음)'));
     body.appendChild(el('p','td-raw',t.quote||t.text||''));
+    if(t.raw&&t.raw!==(t.quote||t.text)){
+      var rw=el('details','td-rawwrap');
+      var sm=document.createElement('summary'); sm.textContent='들린 그대로 보기'; rw.appendChild(sm);
+      rw.appendChild(el('p','td-rawtext',t.raw));
+      body.appendChild(rw);
+    }
     if(t.quote&&t.text&&t.quote!==t.text){
       body.appendChild(el('h4','onto-h','정리한 내용'));
       body.appendChild(el('p','td-body',t.text));
