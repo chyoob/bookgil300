@@ -689,6 +689,10 @@ b,strong{font-weight:700}
 .td-rawwrap{margin-top:7px;font-size:11.5px;color:var(--muted)}
 .td-rawwrap summary{cursor:pointer;font-weight:750;padding:4px 0}
 .td-rawtext{margin:4px 0 0;padding:9px 10px;border-radius:3px;background:var(--paper-2);border:1px solid var(--rule-c);font-size:11.5px;line-height:1.6;color:var(--ink-700)}
+.page-apply{display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px 11px;border:1px solid var(--rule-strong);border-left:2px solid var(--vermilion);border-radius:3px;background:var(--paper-2)}
+.page-apply input{width:17px;height:17px;flex:none;accent-color:var(--ink-900)}
+.page-apply b{display:block;font-size:12.5px}
+.page-apply small{display:block;margin-top:2px;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
 
   </style>
 </head>
@@ -724,7 +728,7 @@ b,strong{font-weight:700}
       <article class="card continue-card">
         <div class="continue-grid">
           <div class="cover cosmos"><small>CARL SAGAN</small><strong>코스모스<br>청소년판</strong></div>
-          <div class="continue-copy"><small>현재 읽는 책</small><h2>172쪽에서<br>멈췄어요</h2><p>지난번에는 “인간의 작음과 책임”에 대해 부모님과 이야기했습니다.</p><div class="progress-meta"><span>172 / 438쪽</span><span id="homeProgressText">39%</span></div><div class="progress"><i id="homeProgressBar"></i></div></div>
+          <div class="continue-copy"><small>현재 읽는 책</small><h2 id="homePageTitle">172쪽에서<br>멈췄어요</h2><p>지난번에는 “인간의 작음과 책임”에 대해 부모님과 이야기했습니다.</p><div class="progress-meta"><span id="homePageMeta">172 / 438쪽</span><span id="homeProgressText">39%</span></div><div class="progress"><i id="homeProgressBar"></i></div></div>
         </div>
         <div class="resume-summary"><b>지난 세션 30초 요약</b><br><span id="resumeSummary">“작다는 것은 하찮다는 뜻이 아니라, 함께 살아가는 지구에 더 큰 책임이 있다는 뜻일 수 있다.”</span></div>
         <div class="continue-actions"><button class="btn primary" id="continueReadingBtn">172쪽부터 이어 읽기</button><button class="btn light" id="openBookHomeBtn">책 한 권 홈</button></div>
@@ -1127,7 +1131,7 @@ b,strong{font-weight:700}
   var SEG_PROMPT='너는 청소년 독서기록 도우미다. 아래는 학생이 책을 읽다가 말한 내용을 받아 적은 전사문이다. 문장이 정리되어 있지 않고 구어체다.\n'+
     '전사문 "전체"를 빠짐없이 훑어서, 의미가 다른 조각마다 하나씩 잘라라. 하나의 조각에 두 가지 생각을 섞지 마라. 짧은 말이라도 의미가 다르면 따로 잘라라.\n'+
     '아래 JSON만 출력하라. 설명이나 코드블록 표시를 붙이지 마라.\n'+
-    '{"summary":"전체를 한 문장으로","tags":["주제어"],"segments":[{"type":"생각|질문|근거|감정|변화|대화","raw":"전사문에서 가져온 부분 그대로","quote":"그 말을 최소한으로 다듬은 한 문장","title":"20자 이내 제목","body":"그 말을 읽기 쉽게 정리한 1~2문장","tags":["주제어"],"note":"이렇게 분류한 이유 한 줄"}]}\n'+
+    '{"summary":"전체를 한 문장으로","page":"학생이 말한 지금 읽는 쪽수 숫자만. 말하지 않았으면 null","tags":["주제어"],"segments":[{"type":"생각|질문|근거|감정|변화|대화","raw":"전사문에서 가져온 부분 그대로","quote":"그 말을 최소한으로 다듬은 한 문장","title":"20자 이내 제목","body":"그 말을 읽기 쉽게 정리한 1~2문장","tags":["주제어"],"note":"이렇게 분류한 이유 한 줄"}]}\n'+
     '규칙:\n'+
     '1) raw 는 전사문에 실제로 있는 말이어야 한다. 새로 지어내지 마라.\n'+
     '1-2) quote 는 raw 를 다듬은 문장이다. 군말(어, 음, 그니까, 뭐지, 좀)과 반복을 빼고, 잘못 들린 말을 바로잡고, 문장을 끝맺어라. 학생의 말투와 뜻은 그대로 둔다. 새 내용을 넣지 마라.\n'+
@@ -1135,7 +1139,8 @@ b,strong{font-weight:700}
     '3) type 기준 — 질문: 답을 아직 모르는 물음. 근거: 책 속 장면·문장·사실을 든 말. 감정: 무서움·놀람·재미 같은 느낌. 변화: 앞의 생각이 뒤에서 바뀐 지점. 대화: 상대와 주고받은 말. 생각: 그 외 학생의 판단·해석.\n'+
     '4) title 은 학생의 말투를 살려 짧게 쓴다. body 는 학생의 말을 정리만 한다 — 새 사실이나 책 내용을 덧붙이지 마라.\n'+
     '5) 조각은 많을수록 좋다. 다만 같은 말을 두 번 넣지 마라.\n'+
-    '6) 한국어로 쓴다.';
+    '6) 한국어로 쓴다.\n'+
+    '7) page 는 학생이 \'172쪽 읽고 있는데\' 처럼 말한 경우에만 숫자로 넣는다. 추측하지 마라.';
 
   function splitChunks(text,size){
     var t=String(text||'').trim(); if(t.length<=size) return [t];
@@ -1160,7 +1165,10 @@ b,strong{font-weight:700}
       s.tags=Array.isArray(s.tags)?s.tags.slice(0,4):[];
       if(mode==='parent'&&s.type==='대화') s.appType='parent'; else s.appType=T2APP[s.type];
     });
+    var pg=null;
+    if(o.page!=null&&!isNaN(parseInt(o.page,10))) pg=parseInt(o.page,10);
     return {
+      page:pg,
       summary:o.summary||(segs[0]&&segs[0].title)||'',
       segments:segs,
       tags:o.tags||[],
@@ -1169,6 +1177,19 @@ b,strong{font-weight:700}
       change:(segs.filter(function(s){return s.appType==='change'})[0]||{}).body||'',
       by:o.by||'ai'
     };
+  }
+
+  function pageFrom(text){
+    var t=String(text||''), best=null, m, re=/(\d{1,4})\s*(?:쪽|페이지|페잇|p\b|P\b)/g;
+    while((m=re.exec(t))){
+      var n=parseInt(m[1],10);
+      if(n>0&&n<=5000) best=n;
+    }
+    if(best==null){
+      var re2=/(?:지금|현재|여기|이제)[^0-9]{0,6}(\d{1,4})\s*(?:까지|부터)?/g;
+      while((m=re2.exec(t))){var n2=parseInt(m[1],10);if(n2>0&&n2<=5000)best=n2}
+    }
+    return best;
   }
 
   function cleanKo(t){
@@ -1202,7 +1223,7 @@ b,strong{font-weight:700}
       var c=cleanKo(p);
       return {type:type,raw:p,quote:c,title:c.slice(0,24),body:c,tags:[],note:'기기 안에서 나눔'};
     });
-    return fromSegments({summary:(segs[0]||{}).quote||t.slice(0,60),segments:segs,tags:[],by:'local'},mode);
+    return fromSegments({summary:(segs[0]||{}).quote||t.slice(0,60),segments:segs,tags:[],page:pageFrom(t),by:'local'},mode);
   }
 
   async function ask(user,maxTokens){
@@ -1280,7 +1301,8 @@ b,strong{font-weight:700}
     }));
     var ok=outs.filter(Boolean);
     if(!ok.length) return organizeLocal(text,mode);
-    var merged={summary:ok[0].summary||'',tags:[],segments:[],by:'ai'};
+    var merged={summary:ok[0].summary||'',tags:[],segments:[],by:'ai',page:null};
+    ok.forEach(function(o){if(merged.page==null&&o.page!=null&&!isNaN(parseInt(o.page,10)))merged.page=parseInt(o.page,10)});
     ok.forEach(function(o){
       (o.tags||[]).forEach(function(t){if(merged.tags.indexOf(t)<0)merged.tags.push(t)});
       (o.segments||[]).forEach(function(s){merged.segments.push(s)});
@@ -1290,6 +1312,7 @@ b,strong{font-weight:700}
       var k=(s.quote||s.title||'').replace(/\s/g,'');
       if(!k||seen[k])return false; seen[k]=1; return true;
     });
+    if(merged.page==null) merged.page=pageFrom(text);
     return fromSegments(merged,mode);
   }
 
@@ -1486,7 +1509,7 @@ b,strong{font-weight:700}
   }
   function closeTools(){var o=document.getElementById('lfhdOverlay');if(!o)return;o.classList.remove('open');if(!document.querySelector('.overlay.open'))document.body.classList.remove('overlay-open')}
 
-  window.LFHD={touch:touch,save:save,share:share,organize:organize,organizeLocal:organizeLocal,ask:ask,askStream:askStream,build:build,getCfg:getCfg,setCfg:setCfg};
+  window.LFHD={touch:touch,save:save,share:share,organize:organize,organizeLocal:organizeLocal,ask:ask,askStream:askStream,pageFrom:pageFrom,build:build,getCfg:getCfg,setCfg:setCfg};
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){boot();bindTools()});
   else {boot();bindTools()}
 })();
@@ -1583,6 +1606,9 @@ b,strong{font-weight:700}
   function renderToday(){
     const pct=Math.round(state.page/438*100);
     $('#homeProgressText').textContent=pct+'%';
+    if($('#homePageTitle'))$('#homePageTitle').innerHTML=state.page+'쪽에서<br>멈췄어요';
+    if($('#homePageMeta'))$('#homePageMeta').textContent=state.page+' / 438쪽';
+    if($('#continueReadingBtn'))$('#continueReadingBtn').textContent=state.page+'쪽부터 이어 읽기';
     $('#homeProgressBar').style.width=pct+'%';
     $('#libraryCosmosProgress').style.width=pct+'%';
     $('#todayQuestionList').innerHTML=state.questions.slice(0,2).map(q=>`<button class="question-card" data-question-id="${q.id}"><small>${q.page}쪽에서 시작 · ${q.status}</small><b>${q.title}</b><p>${q.history[q.history.length-1].text}</p><div class="question-progress"><i class="done"></i><i class="${q.history.length>1?'done':''}"></i><i class="${q.history.length>2?'done':''}"></i></div><div class="question-foot"><span>${q.history.length}개의 연결 기록</span><strong>계속 보기 ›</strong></div></button>`).join('');
@@ -1909,6 +1935,19 @@ b,strong{font-weight:700}
     sum.appendChild(chips);
     box.appendChild(sum);
 
+    var pg=res.page||window.LFHD.pageFrom(rawText);
+    if(pg&&pg!==state.page){
+      var pr=el('label','page-apply'); pr.id='pageApplyRow';
+      var pc=document.createElement('input'); pc.type='checkbox'; pc.id='pageApply'; pc.checked=true;
+      pr.appendChild(pc);
+      var ps=el('span');
+      ps.appendChild(el('b',null,'말한 쪽수로 바꾸기'));
+      ps.appendChild(el('small',null,state.page+'쪽 → '+pg+'쪽'));
+      pr.appendChild(ps);
+      pr.dataset.page=pg;
+      box.appendChild(pr);
+    }
+
     var head=el('div','seg-head');
     head.appendChild(el('b',null,'AI 분류 확인·수정'));
     var toggle=el('button','seg-toggle','전체 해제');
@@ -1981,6 +2020,11 @@ b,strong{font-weight:700}
   function saveVoiceRecord(){
     if(!lastResult) return;
     var res=lastResult.res, rawText=lastResult.rawText, now=Date.now();
+    var pgRow=document.getElementById('pageApplyRow'), pageChanged=null;
+    if(pgRow&&document.getElementById('pageApply').checked){
+      var np=parseInt(pgRow.dataset.page,10);
+      if(np>0){ pageChanged=np; state.page=np; state.startPage=state.startPage||np; }
+    }
     var dateLabel='오늘 · '+state.page+'쪽';
     var n=0;
     var tidy=(res.segments||[]).map(function(x){return x.quote}).filter(Boolean).join(' ');
@@ -2007,8 +2051,9 @@ b,strong{font-weight:700}
     $('#dockCount').textContent='기록 '+state.sessionRecords;
     saveState();renderToday();renderBookWorkspace();renderThoughts();
     if(window.V12){window.V12.renderOntology();window.V12.renderPicker()}
+    if(pageChanged&&window.__setState) window.__setState({page:pageChanged});
     closeOverlay('voiceOverlay');
-    toast('생각 조각 '+saved+'개와 원문을 한 번에 저장했습니다.');
+    toast('생각 조각 '+saved+'개를 저장했습니다.'+(pageChanged?' 현재 쪽을 '+pageChanged+'쪽으로 바꿨습니다.':''));
   }
 
   function saveQuickNote(){
